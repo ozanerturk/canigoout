@@ -89,7 +89,7 @@
                 }
                 else if (now.diff(time_16_00) > 0) {
                     let nexday = time_13_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + time_13_00.format(format))
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
                     return false;
                 } else {
                     alert("GIT DOLAŞ bir sonraki yasak " + time_16_00.format(format))
@@ -103,7 +103,7 @@
                 }
                 else if (now.diff(time_16_00) > 0) {
                     let nexday = time_13_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + time_13_00.format(format))
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
                     return false;
                 } else {
                     alert("GIT DOLAŞ bir sonraki yasak " + time_16_00.format(format))
@@ -132,12 +132,34 @@
                 }
             }
             else if (isWeekday && age > 65) {
+                if (now.diff(time_10_00) < 0) {
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_10_00.format(format))
+                    return false;
+                }
+                else if (now.diff(time_13_00) > 0) {
+                    let nexday = time_10_00.add(1, "days")
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
+                    return false;
+                } else {
+                    alert("GIT DOLAŞ bir sonraki yasak " + time_13_00.format(format))
+                    return true;
+                }
 
             }
             else if (isWeekend && age > 65) {
-
+                if (now.diff(time_10_00) < 0) {
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_10_00.format(format))
+                    return false;
+                }
+                else if (now.diff(time_13_00) > 0) {
+                    let nexday = time_10_00.add(1, "days")
+                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
+                    return false;
+                } else {
+                    alert("GIT DOLAŞ bir sonraki yasak " + time_13_00.format(format))
+                    return true;
+                }
             }
-
         }
     </script>
     <style>
