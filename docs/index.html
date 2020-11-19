@@ -16,60 +16,128 @@
 
 <body onload="startTime()">
     <div id="container">
-        <div id="timer"></div>
-        <h1 class="title">Yaşınız</h1>
-        <input id="date" type="date"> <input id="time" type="time">
-        <input id="age" type="number" class="title" />
+        <div id="timer" style="position: fixed; right: 10px; top:10px"></div>
+        <input id="customdate" onChange="oncustomchange()" type="checkbox"> <span style="font-size: 12px;">Başka bir
+            tarih için kontrol et</span><br><br>
+        <span id="custom_date_panel" style="display: none; "> <input id="date" type="date"> <input id="time"
+                type="time"></span>
+        <h1 class="title">Yaşınız ?</h1>
+
+        <input id="age" type="number" style="width:57px" value="25" class="title" />
         <h1 class="title">Çalışıyor musunuz ?</h1>
         <div class="control">
             <label class="radio">
-                <input type="radio" value="true" name="working">
+                <input type="radio" onChange="onWorkingChange()" value="true" name="working">
                 Evet
             </label>
             <label class="radio">
-                <input type="radio" value="false" name="working">
+                <input type="radio" onChange="onWorkingChange()" checked value="false" name="working">
                 Hayır
             </label>
             <br>
             <br>
-            <button onClick="analyze()" class="button">Tamam</button>
         </div>
+        <div id="package-delivery-panel" style="display: none;">
+            <h1 class="title">Paket servisi veren bir işletmede mi çalışıyorsunuz ?</h1>
+            <div class="control">
+                <label class="radio">
+                    <input type="radio" value="true" name="package-delivery">
+                    Evet
+                </label>
+                <label class="radio">
+                    <input type="radio" value="false" checked name="package-delivery">
+                    Hayır
+                </label>
+                <br>
+                <br>
+            </div>
+
+        </div>
+        <button onClick="analiz_et()" class="button size-sm">Kontrol et</button>
+        <br>
+        <br>
+        <h1 id="sonuc"></h1>
+
     </div>
 
     <template>
         <h1>Dışarı çıkabilir miyim ?</h1>
     </template>
     <script>
-        format = "HH:mm:ss DD/MM/YYYY"
+        let format = "HH:mm:ss DD/MM/YYYY"
+        let sonucDom = document.getElementById("sonuc")
+        let isWorking = false;
+        let isCustom = false;
+        let isPackageDelivery = false;
+        let package_delivery_panel = document.getElementById("package-delivery-panel")
+        let custom_date_panel = document.getElementById("custom_date_panel")
         function startTime() {
             document.getElementById('timer').innerHTML = dayjs().format(format)
             var t = setTimeout(startTime, 500);
+        }
+        function oncustomchange() {
+            let custom = document.querySelector("#customdate");
+            isCustom = custom.checked
+            console.log(custom)
+            if (isCustom) {
+                custom_date_panel.style.display = "block"
+            } else {
+                custom_date_panel.style.display = "none"
+            }
+        }
+        function onWorkingChange() {
+            let workingDom = document.querySelector("input[name=working]:checked");
+            let isWorking = workingDom.value == "true";
+            if (isWorking) {
+                package_delivery_panel.style.display = "block"
+            } else {
+                package_delivery_panel.style.display = "none"
+            }
         }
         function checkTime(i) {
             if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
             return i;
         }
-        const states = ["GO OUT", "STAY HOME"]
 
-        function isWeekend(date) {
 
+        function analiz_et() {
+            if (disari_cikabilir_miyim()) {
+                text = "<b>Evet</b><br> #MASKETAK"
+            } else {
+                text = "<b>Hayır</b><br> #EVDEKAL"
+            }
+            sonucDom.innerHTML = "hesaplanıyor..."
+            setTimeout(() => {
+                sonucDom.innerHTML = text
+            }, 500);
         }
-
-        function analyze() {
+        function disari_cikabilir_miyim() {
             let date = document.getElementById("date");
             let time = document.getElementById("time");
-
-            let now = dayjs(date.value + "T" + time.value + ":00")
+            let now = dayjs();
+            if (isCustom) {
+                now = dayjs(date.value + "T" + time.value + ":00")
+            }
 
             let workingDom = document.querySelector("input[name=working]:checked");
+            let packageDelivery = document.querySelector("input[name=package-delivery]:checked");
             let ageDom = document.querySelector("#age");
             if (!workingDom || !ageDom) return;
-            let isWorking = workingDom.value == "ture"
+            isWorking = workingDom.value == "true"
+            isPackageDelivery = packageDelivery.value == "true"
 
             let age = parseInt(ageDom.value)
             var day = now.toDate().getDay();
             let isWeekday = !((day === 6) || (day === 0));
             let isWeekend = (day === 6) || (day === 0);
+
+            let pazar = day == 0
+            let pazartesi = day == 1
+            let salı = day == 2
+            let carsamba = day == 3
+            let persembe = day == 4
+            let cuma = day == 5
+            let cumartesi = day == 6
 
             let time_05_00 = now.hour(5).minute(0).second(0)
             let time_10_00 = now.hour(10).minute(0).second(0)
@@ -77,96 +145,81 @@
             let time_16_00 = now.hour(16).minute(0).second(0)
             let time_20_00 = now.hour(20).minute(0).second(0)
 
-            if (isWorking) {
-                alert("geçerli bir çalışma belgeniz varsa dışarıya çıkabilirsiniz ")
+            console.log('20', time_20_00)
+            if (isPackageDelivery) {
                 return true;
-            }
-
-            if (isWeekday && age < 20) {
-                if (now.diff(time_13_00) < 0) {
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_13_00.format(format))
-                    return false;
-                }
-                else if (now.diff(time_16_00) > 0) {
-                    let nexday = time_13_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
-                    return false;
-                } else {
-                    alert("GIT DOLAŞ bir sonraki yasak " + time_16_00.format(format))
-                    return true;
-                }
-            }
-            else if (isWeekend && age < 20) {
-                if (now.diff(time_13_00) < 0) {
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_13_00.format(format))
-                    return false;
-                }
-                else if (now.diff(time_16_00) > 0) {
-                    let nexday = time_13_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
-                    return false;
-                } else {
-                    alert("GIT DOLAŞ bir sonraki yasak " + time_16_00.format(format))
-                    return true;
-                }
-            }
-            else if (isWeekday && age >= 20 && age < 65) {
-                alert("GIT DOLAŞ bir sonraki yasak " + time_10_00.day(6).format(format))
-            }
-            else if (isWeekend && age >= 20 && age < 65) {
-                if (now.diff(time_10_00) < 0) {
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_10_00.format(format))
-                    return false;
-                }
-                else if (now.diff(time_20_00) > 0) {
-                    let nexday = time_10_00.add(1, "days")
-                    if (nexday.toDate().getDay() == 1) { //is monday ? 
-                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.hour(5).format(format))
+            } else {
+                if (isWorking) { // çalışan
+                    if (age < 20) {// 20 yaşından küçük
+                        if (now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) { // 10 ile 20 arası
+                            return true;
+                        } else {
+                            return false;
+                        }
                     } else {
-                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
+                        if (pazartesi && now.diff(time_05_00) > 0) { //05 sonrası
+                            return true;
+                        } else if (salı || carsamba || persembe) {
+                            return true;
+                        } else if (cuma && now.diff(time_20_00) < 0) {
+                            return true;
+                        } else if ((cumartesi || pazar) && now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
-                    return false;
-                } else {
-                    alert("GIT DOLAŞ bir sonraki yasak " + time_16_00.format(format))
-                    return true;
+                } else {// çalışmıyoruz
+                    if (age < 20) {
+                        if (now.diff(time_13_00) > 0 && now.diff(time_16_00) < 0) { //13 -16 arası
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (age >= 20 && age < 65) {
+                        if (pazartesi && now.diff(time_05_00) > 0) { //05 sonrası
+                            return true;
+                        } else if (salı || carsamba || persembe) {
+                            return true;
+                        } else if (cuma && now.diff(time_20_00) < 0) {
+                            return true;
+                        } else if ((cumartesi || pazar) && now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else { //age >= 65
+                        if (now.diff(time_10_00) > 0 && now.diff(time_13_00) < 0) { //13 -16 arası
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
                 }
             }
-            else if (isWeekday && age > 65) {
-                if (now.diff(time_10_00) < 0) {
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_10_00.format(format))
-                    return false;
-                }
-                else if (now.diff(time_13_00) > 0) {
-                    let nexday = time_10_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
-                    return false;
-                } else {
-                    alert("GIT DOLAŞ bir sonraki yasak " + time_13_00.format(format))
-                    return true;
-                }
 
-            }
-            else if (isWeekend && age > 65) {
-                if (now.diff(time_10_00) < 0) {
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman" + time_10_00.format(format))
-                    return false;
-                }
-                else if (now.diff(time_13_00) > 0) {
-                    let nexday = time_10_00.add(1, "days")
-                    alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
-                    return false;
-                } else {
-                    alert("GIT DOLAŞ bir sonraki yasak " + time_13_00.format(format))
-                    return true;
-                }
-            }
         }
     </script>
     <style>
         @import url("https://fonts.googleapis.com/css?family=Dosis:400,700");
 
+        #sonuc {
+            font-size: 50px;
+        }
+
         html {
             overflow: hidden;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
         }
 
         :root {
@@ -201,9 +254,14 @@
             flex: 1;
         }
 
+        h1 {
+            color: white !important;
+        }
+
         body {
+            color: white !important;
             font: 16px/1.5 "Dosis", sans-serif;
-            background: yellow;
+            background: #00a0a0;
             min-height: 100vh;
             display: flex;
             align-items: center;
