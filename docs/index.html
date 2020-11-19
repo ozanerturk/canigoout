@@ -71,11 +71,11 @@
             let isWeekday = !((day === 6) || (day === 0));
             let isWeekend = (day === 6) || (day === 0);
 
-            let time_05_00 = dayjs().hour(0).minute(0).second(0)
-            let time_10_00 = dayjs().hour(10).minute(0).second(0)
-            let time_13_00 = dayjs().hour(13).minute(0).second(0)
-            let time_16_00 = dayjs().hour(16).minute(0).second(0)
-            let time_20_00 = dayjs().hour(20).minute(0).second(0)
+            let time_05_00 = now.hour(5).minute(0).second(0)
+            let time_10_00 = now.hour(10).minute(0).second(0)
+            let time_13_00 = now.hour(13).minute(0).second(0)
+            let time_16_00 = now.hour(16).minute(0).second(0)
+            let time_20_00 = now.hour(20).minute(0).second(0)
 
             if (isWorking) {
                 alert("geçerli bir çalışma belgeniz varsa dışarıya çıkabilirsiniz ")
@@ -121,9 +121,9 @@
                 else if (now.diff(time_20_00) > 0) {
                     let nexday = time_10_00.add(1, "days")
                     if (nexday.toDate().getDay() == 1) { //is monday ? 
-                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + time_05_00.day(1).format(format))
+                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.hour(5).format(format))
                     } else {
-                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + time_10_00.format(format))
+                        alert("ÇIKAMAZSIN. Bir sonraki çıkabileceğin zaman " + nexday.format(format))
                     }
                     return false;
                 } else {
