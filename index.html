@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bulma-calendar@6.0.9/dist/js/bulma-calendar.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/locale/tr.js"></script>
+    <script>dayjs.locale('tr')</script>
+
+
+</head>
+
+<body onload="startTime()">
+    <div id="container">
+        <div id="timer"></div>
+        <h1 class="title">Yaşınız</h1>
+        <input id="date" type="date"> <input id="time" type="time">
+        <input id="age" type="number" class="title" />
+        <h1 class="title">Çalışıyor musunuz ?</h1>
+        <div class="control">
+            <label class="radio">
+                <input type="radio" value="true" name="working">
+                Evet
+            </label>
+            <label class="radio">
+                <input type="radio" value="false" name="working">
+                Hayır
+            </label>
+            <br>
+            <br>
+            <button onClick="analyze()" class="button">Tamam</button>
+        </div>
+    </div>
+
+    <template>
+        <h1>Hello there!</h1>
+    </template>
+    <script>
+        format = "HH:mm:ss DD/MM/YYYY"
+        function startTime() {
+            document.getElementById('timer').innerHTML = dayjs().format(format)
+            var t = setTimeout(startTime, 500);
+        }
+        function checkTime(i) {
+            if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+            return i;
+        }
+        const states = ["GO OUT", "STAY HOME"]
+
+        function isWeekend(date) {
+
+        }
+
+        function analyze() {
+            let date = document.getElementById("date");
+            let time = document.getElementById("time");
+
+            let now = dayjs(date.value + "T" + time.value + ":00")
+
+            let workingDom = document.querySelector("input[name=working]:checked");
+            let ageDom = document.querySelector("#age");
+            if (!workingDom || !ageDom) return;
+            let isWorking = workingDom.value == "ture"
+
+            let age = parseInt(ageDom.value)
+            var day = now.toDate().getDay();
+            let isWeekday = !((day === 6) || (day === 0));
+            let isWeekend = (day === 6) || (day === 0);
+
+            let time_10_00 = dayjs().hour(10).minute(0).second(0)
+            let time_13_00 = dayjs().hour(13).minute(0).second(0)
+            let time_16_00 = dayjs().hour(16).minute(0).second(0)
+            let time_20_00 = dayjs().hour(20).minute(0).second(0)
+
+
+            if (isWeekday && age < 20) {
+                if (now.diff(time_13_00) < 0) {
+                    alert("cant go out next time " + time_13_00.format(format))
+                }
+                else if (now.diff(time_16_00) > 0) {
+                    let nexday = time_13_00.add(1, "days")
+                    alert("cant go out next time " + time_13_00.format(format))
+                }else{
+                    alert("you can go out")
+                }
+            }
+            else if (isWeekend && age < 20) {
+
+            }
+            else if (isWeekday && age >= 20 && age < 65) {
+
+            }
+            else if (isWeekend && age >= 20 && age < 65) {
+
+            }
+            else if (isWeekday && age > 65) {
+
+            }
+            else if (isWeekend && age > 65) {
+
+            }
+
+        }
+    </script>
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Dosis:400,700");
+
+        html {
+            overflow: hidden;
+        }
+
+        :root {
+            --main-white-color: #f2f2f2;
+            --main-black-color: black;
+            --main-purple-color: #9e89b8;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        #container {
+            text-align: center;
+            flex: 1;
+        }
+
+        body {
+            font: 16px/1.5 "Dosis", sans-serif;
+            background: yellow;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            /*IE FIX*/
+            /*display: flex;
+  flex-direction: column;*/
+        }
+
+        /* CONTAINER
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .wrapper>* {
+            padding: 20px;
+        }
+
+
+        @media screen and (min-width: 768px) {
+            body {
+                font-size: 18px;
+            }
+
+        }
+    </style>
+</body>
+
+</html>
