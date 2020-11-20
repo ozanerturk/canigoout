@@ -136,6 +136,12 @@
 
             let age = parseInt(ageInput.value)
             localStorage.age = age;
+
+            if(!isWorking){
+                isPackageDelivery= false
+            }
+            
+            let age = parseInt(ageDom.value)
             var day = now.toDate().getDay();
             let isWeekday = !((day === 6) || (day === 0));
             let isWeekend = (day === 6) || (day === 0);
