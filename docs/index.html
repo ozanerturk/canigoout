@@ -10,13 +10,13 @@
     <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
     <script src="https://unpkg.com/dayjs@1.8.21/locale/tr.js"></script>
     <script>dayjs.locale('tr')</script>
-
+    <script src="https://kit.fontawesome.com/f61f76c983.js" crossorigin="anonymous"></script>
 
 </head>
 
 <body onload="startTime()">
     <div id="container">
-        <h1>Şu an dışarı çıkabilir miyim? </h1>
+        <h1>Sokağa çıkabilir miyim ? </h1>
         <div id="timer" style="position: fixed; right: 10px; top:10px"></div>
         <input id="customdate" onChange="oncustomchange()" type="checkbox"> <span style="font-size: 12px;">Başka bir
             tarih için kontrol et</span><br><br>
@@ -58,12 +58,11 @@
         <br>
         <br>
         <h1 id="sonuc"></h1>
+        <a href="https://github.com/ozanerturk/canigoout"> <i class="fa fa-github"
+                style="position:absolute; left:10px; top:10px; font-size:36px;"></i></a>
 
     </div>
 
-    <template>
-        <h1>Dışarı çıkabilir miyim ?</h1>
-    </template>
     <script>
         let format = "HH:mm:ss DD/MM/YYYY"
         let sonucDom = document.getElementById("sonuc")
@@ -103,9 +102,9 @@
 
         function analiz_et() {
             if (disari_cikabilir_miyim()) {
-                text = "<b>Evet</b><br> #MASKETAK"
+                text = "<b>Evet</b><br> #MASKETAK <i class='fas fa-head-side-mask'></i>"
             } else {
-                text = "<b>Hayır</b><br> #EVDEKAL"
+                text = "<b>Hayır</b><br> #EVDEKAL<i class='fas fa-home'></i>"
             }
             sonucDom.innerHTML = "hesaplanıyor..."
             setTimeout(() => {
