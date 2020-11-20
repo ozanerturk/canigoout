@@ -127,7 +127,9 @@
             if (!workingDom || !ageDom) return;
             isWorking = workingDom.value == "true"
             isPackageDelivery = packageDelivery.value == "true"
-
+            if(!isWorking){
+                isPackageDelivery= false
+            }
             let age = parseInt(ageDom.value)
             var day = now.toDate().getDay();
             let isWeekday = !((day === 6) || (day === 0));
