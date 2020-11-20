@@ -61,6 +61,8 @@
         <a href="https://github.com/ozanerturk/canigoout"> <i class="fa fa-github"
                 style="position:absolute; left:10px; top:10px; font-size:36px;"></i></a>
 
+        <a
+            href="https://www.icisleri.gov.tr/koronavirus-salgini-yeni-tedbirleri-ile-ilgili-sikca-sorulan-sorular">S.S.S.</a>
     </div>
 
     <script>
@@ -145,7 +147,9 @@
             let time_16_00 = now.hour(16).minute(0).second(0)
             let time_20_00 = now.hour(20).minute(0).second(0)
 
-            console.log('20', time_20_00)
+            if (now.diff(dayjs("2020-11-21T20:00:00")) < 0) {
+                return true;
+            }
             if (isPackageDelivery) {
                 return true;
             } else {
