@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dışarı Çıkabilir miyim ?</title>
+    <title>Dışarı Çıkabilir Miyim ?</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bulma-calendar@6.0.9/dist/js/bulma-calendar.min.js"></script>
     <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
@@ -14,17 +14,16 @@
 
 </head>
 
-<body onload="startTime()">
+<body onload="init()">
     <div id="container">
-        <h1>Sokağa çıkabilir miyim ? </h1>
+        <h1 class="title">Sokağa çıkabilir miyim ? </h1>
         <div id="timer" style="position: fixed; right: 10px; top:10px"></div>
         <input id="customdate" onChange="oncustomchange()" type="checkbox"> <span style="font-size: 12px;">Başka bir
             tarih için kontrol et</span><br><br>
         <span id="custom_date_panel" style="display: none; "> <input id="date" type="date"> <input id="time"
                 type="time"></span>
         <h1 class="title">Yaşınız ?</h1>
-
-        <input id="age" type="number" style="width:57px" value="25" class="title" />
+        <input id="age" onClick="this.value=''" type="number" style="width:57px"  class="title" />
         <h1 class="title">Çalışıyor musunuz ?</h1>
         <div class="control">
             <label class="radio">
@@ -73,9 +72,18 @@
         let isPackageDelivery = false;
         let package_delivery_panel = document.getElementById("package-delivery-panel")
         let custom_date_panel = document.getElementById("custom_date_panel")
+        let ageInput = document.getElementById("age");
         function startTime() {
             document.getElementById('timer').innerHTML = dayjs().format(format)
             var t = setTimeout(startTime, 500);
+        }
+        function init() {
+            if (localStorage.age) {
+                ageInput.value = localStorage.age
+            } else {
+                ageInput.value = 25
+            }
+            startTime();
         }
         function oncustomchange() {
             let custom = document.querySelector("#customdate");
@@ -123,14 +131,17 @@
 
             let workingDom = document.querySelector("input[name=working]:checked");
             let packageDelivery = document.querySelector("input[name=package-delivery]:checked");
-            let ageDom = document.querySelector("#age");
-            if (!workingDom || !ageDom) return;
+            if (!workingDom) return;
             isWorking = workingDom.value == "true"
             isPackageDelivery = packageDelivery.value == "true"
+
+            let age = parseInt(ageInput.value)
+            localStorage.age = age;
+
             if(!isWorking){
                 isPackageDelivery= false
             }
-            let age = parseInt(ageDom.value)
+
             var day = now.toDate().getDay();
             let isWeekday = !((day === 6) || (day === 0));
             let isWeekend = (day === 6) || (day === 0);
