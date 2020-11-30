@@ -22,37 +22,8 @@
             tarih için kontrol et</span><br><br>
         <span id="custom_date_panel" style="display: none; "> <input id="date" type="date"> <input id="time"
                 type="time"></span>
-        <h1 class="title">Yaşınız ?</h1>
-        <input id="age" onClick="this.value=''" type="number" style="width:57px"  class="title" />
-        <h1 class="title">Çalışıyor musunuz ?</h1>
-        <div class="control">
-            <label class="radio">
-                <input type="radio" onChange="onWorkingChange()" value="true" name="working">
-                Evet
-            </label>
-            <label class="radio">
-                <input type="radio" onChange="onWorkingChange()" checked value="false" name="working">
-                Hayır
-            </label>
-            <br>
-            <br>
-        </div>
-        <div id="package-delivery-panel" style="display: none;">
-            <h1 class="title">Paket servisi veren bir işletmede mi çalışıyorsunuz ?</h1>
-            <div class="control">
-                <label class="radio">
-                    <input type="radio" value="true" name="package-delivery">
-                    Evet
-                </label>
-                <label class="radio">
-                    <input type="radio" value="false" checked name="package-delivery">
-                    Hayır
-                </label>
                 <br>
                 <br>
-            </div>
-
-        </div>
         <button onClick="analiz_et()" class="button size-sm">Kontrol et</button>
         <br>
         <br>
@@ -67,24 +38,14 @@
     <script>
         let format = "HH:mm:ss DD/MM/YYYY"
         let sonucDom = document.getElementById("sonuc")
-        let isWorking = false;
         let isCustom = false;
-        let isPackageDelivery = false;
-        let package_delivery_panel = document.getElementById("package-delivery-panel")
         let custom_date_panel = document.getElementById("custom_date_panel")
-        let ageInput = document.getElementById("age");
+
         function startTime() {
             document.getElementById('timer').innerHTML = dayjs().format(format)
             var t = setTimeout(startTime, 500);
         }
-        function init() {
-            if (localStorage.age) {
-                ageInput.value = localStorage.age
-            } else {
-                ageInput.value = 25
-            }
-            startTime();
-        }
+
         function oncustomchange() {
             let custom = document.querySelector("#customdate");
             isCustom = custom.checked
@@ -93,15 +54,6 @@
                 custom_date_panel.style.display = "block"
             } else {
                 custom_date_panel.style.display = "none"
-            }
-        }
-        function onWorkingChange() {
-            let workingDom = document.querySelector("input[name=working]:checked");
-            let isWorking = workingDom.value == "true";
-            if (isWorking) {
-                package_delivery_panel.style.display = "block"
-            } else {
-                package_delivery_panel.style.display = "none"
             }
         }
         function checkTime(i) {
@@ -129,19 +81,6 @@
                 now = dayjs(date.value + "T" + time.value + ":00")
             }
 
-            let workingDom = document.querySelector("input[name=working]:checked");
-            let packageDelivery = document.querySelector("input[name=package-delivery]:checked");
-            if (!workingDom) return;
-            isWorking = workingDom.value == "true"
-            isPackageDelivery = packageDelivery.value == "true"
-
-            let age = parseInt(ageInput.value)
-            localStorage.age = age;
-
-            if(!isWorking){
-                isPackageDelivery= false
-            }
-
             var day = now.toDate().getDay();
             let isWeekday = !((day === 6) || (day === 0));
             let isWeekend = (day === 6) || (day === 0);
@@ -155,65 +94,22 @@
             let cumartesi = day == 6
 
             let time_05_00 = now.hour(5).minute(0).second(0)
-            let time_10_00 = now.hour(10).minute(0).second(0)
-            let time_13_00 = now.hour(13).minute(0).second(0)
-            let time_16_00 = now.hour(16).minute(0).second(0)
-            let time_20_00 = now.hour(20).minute(0).second(0)
+            let time_21_00 = now.hour(21).minute(0).second(0)
 
             if (now.diff(dayjs("2020-11-21T20:00:00")) < 0) {
                 return true;
             }
-            if (isPackageDelivery) {
-                return true;
-            } else {
-                if (isWorking) { // çalışan
-                    if (age < 20) {// 20 yaşından küçük
-                        if (now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) { // 10 ile 20 arası
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        if (pazartesi && now.diff(time_05_00) > 0) { //05 sonrası
-                            return true;
-                        } else if (salı || carsamba || persembe) {
-                            return true;
-                        } else if (cuma && now.diff(time_20_00) < 0) {
-                            return true;
-                        } else if ((cumartesi || pazar) && now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                } else {// çalışmıyoruz
-                    if (age < 20) {
-                        if (now.diff(time_13_00) > 0 && now.diff(time_16_00) < 0) { //13 -16 arası
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else if (age >= 20 && age < 65) {
-                        if (pazartesi && now.diff(time_05_00) > 0) { //05 sonrası
-                            return true;
-                        } else if (salı || carsamba || persembe) {
-                            return true;
-                        } else if (cuma && now.diff(time_20_00) < 0) {
-                            return true;
-                        } else if ((cumartesi || pazar) && now.diff(time_10_00) > 0 && now.diff(time_20_00) < 0) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else { //age >= 65
-                        if (now.diff(time_10_00) > 0 && now.diff(time_13_00) < 0) { //13 -16 arası
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
+
+
+            if ((pazartesi||salı || carsamba || persembe || cuma) && ((now.diff(time_21_00) < 0) && (now.diff(time_05_00) > 0))){
+                return true
             }
+            if(cumartesi || pazar){
+                return false
+            }
+
+
+            
 
         }
     </script>
